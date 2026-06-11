@@ -9,20 +9,20 @@ from fastapi.responses import JSONResponse
 from models import SimulationConfig
 from simulation.engine import SimulationEngine
 
-logger = logging.getLogger("vcc.api")
+logger = logging.getLogger("simuscale.api")
 engine = SimulationEngine()
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    logger.info("Starting VCC Simulation API")
+    logger.info("Starting SimuScale API")
     await engine.start()
     yield
-    logger.info("Shutting down VCC Simulation API")
+    logger.info("Shutting down SimuScale API")
     await engine.stop()
 
 
-app = FastAPI(lifespan=lifespan, title="VCC Simulation API", version="1.0.0")
+app = FastAPI(lifespan=lifespan, title="SimuScale API", version="1.0.0")
 
 app.add_middleware(
     CORSMiddleware,

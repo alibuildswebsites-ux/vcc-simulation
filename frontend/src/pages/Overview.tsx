@@ -75,7 +75,7 @@ export const Overview: React.FC = () => {
           className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#111111] border border-[#222222] text-xs font-medium text-[#737373] mb-6"
         >
           <span className="h-1.5 w-1.5 rounded-full bg-white animate-pulse" />
-          Virtual Cloud Computing
+          SimuScale
         </motion.div>
 
         <motion.h1

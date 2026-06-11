@@ -14,7 +14,7 @@ def setup_logging():
         datefmt="%Y-%m-%d %H:%M:%S",
         stream=sys.stdout,
     )
-    logging.getLogger("vcc").setLevel(level)
+    logging.getLogger("simuscale").setLevel(level)
     logging.getLogger("uvicorn.access").setLevel(logging.WARNING)
 
 

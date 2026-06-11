@@ -125,10 +125,10 @@ export const About: React.FC = () => {
             <span className="h-1.5 w-1.5 rounded-full bg-white animate-pulse" /> architecture
           </div>
           <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-white leading-none mb-4">
-            How VCC Works
+            How SimuScale Works
           </h1>
           <p className="text-sm text-[#737373] leading-relaxed max-w-xl">
-            Virtual Cloud Computing Simulator — a full-stack simulation of ML-driven auto-scaling with predictive analytics, cold start optimization, and security threat detection.
+            SimuScale — a full-stack simulation of ML-driven auto-scaling with predictive analytics, cold start optimization, and security threat detection.
           </p>
         </motion.div>
 

@@ -36,7 +36,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
             <Activity className="h-5 w-5 text-white" strokeWidth={2} />
             <span className="absolute -top-0.5 -right-0.5 h-1.5 w-1.5 rounded-full bg-white animate-pulse" />
           </div>
-          <span className="font-bold text-base tracking-tight text-white">Virtual Cloud Computing</span>
+          <span className="font-bold text-base tracking-tight text-white">SimuScale</span>
         </button>
 
         {/* Desktop tabs */}
