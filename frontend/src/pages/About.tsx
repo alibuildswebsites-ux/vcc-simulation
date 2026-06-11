@@ -142,8 +142,8 @@ export const About: React.FC = () => {
             {sections.map((s) => {
               const Icon = s.icon;
               return (
-                <div key={s.id} className="p-[1px] rounded-2xl bg-gradient-to-b from-white/10 to-transparent">
-                  <div className="rounded-[calc(2rem-1px)] bg-[#0a0a0a] p-5 sm:p-6 h-full">
+                <div key={s.id} className="p-[1px] rounded-2xl bg-gradient-to-b from-white/8 to-transparent">
+                  <div className="rounded-[calc(2rem-1px)] bg-[#0f0f0f] p-5 sm:p-6 h-full">
                     <div className="flex items-center gap-3 mb-3">
                       <div className="h-8 w-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center">
                         <Icon className="h-4 w-4 text-white" strokeWidth={1.5} />

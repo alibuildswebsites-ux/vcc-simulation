@@ -1,6 +1,5 @@
-import { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Activity, BrainCircuit, BarChart3, ArrowRight, Shield, Zap, Sparkles } from 'lucide-react';
+import { Activity, BrainCircuit, BarChart3, ArrowRight, Shield, Zap, Target } from 'lucide-react';
 import { useSimulation } from '../hooks/useSimulation';
 
 const stagger = {
@@ -16,13 +15,9 @@ const fadeUp = {
 export const Overview: React.FC = () => {
   const { state, start, stop } = useSimulation();
 
-  const autoStarted = useRef(false);
-  useEffect(() => {
-    if (!autoStarted.current && state?.running === false) {
-      autoStarted.current = true;
-      start();
-    }
-  }, [state?.running, start]);
+  const accuracy = state?.prediction_confidence?.avg_error != null
+    ? Math.max(0, Math.min(99.9, (1 - state.prediction_confidence.avg_error) * 100)).toFixed(1)
+    : '—';
 
   const stats = [
     {
@@ -30,6 +25,12 @@ export const Overview: React.FC = () => {
       value: state?.current_users ?? 0,
       label: 'Current Users',
       sub: 'Simulated load',
+    },
+    {
+      icon: Target,
+      value: `${accuracy}%`,
+      label: 'Prediction Accuracy',
+      sub: 'Higher is better',
     },
     {
       icon: BrainCircuit,
@@ -65,18 +66,6 @@ export const Overview: React.FC = () => {
 
   return (
     <div className="flex flex-col min-h-[calc(100dvh-3.5rem)] py-16 sm:py-24 px-2">
-      {/* Auto-start notice as fixed toast */}
-      {!state?.running && (
-        <motion.div
-          initial={{ opacity: 0, y: -12 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="fixed top-16 left-1/2 -translate-x-1/2 z-40 flex items-center gap-2 px-4 py-2 bg-[#111111] border border-[#222222] rounded-full text-xs text-[#e7000b] shadow-lg"
-        >
-          <Sparkles className="h-3 w-3" strokeWidth={2} />
-          Starting simulation...
-        </motion.div>
-      )}
-
       {/* Hero */}
       <div className="flex-1 flex flex-col items-center justify-center text-center max-w-3xl mx-auto w-full">
         <motion.div
@@ -139,7 +128,7 @@ export const Overview: React.FC = () => {
         variants={stagger}
         initial="hidden"
         animate="visible"
-        className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto w-full mt-16"
+        className="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-5xl mx-auto w-full mt-16"
       >
         {stats.map((s, i) => {
           const Icon = s.icon;
