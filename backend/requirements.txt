@@ -1,0 +1,8 @@
+fastapi
+uvicorn[standard]
+websockets
+pydantic
+numpy
+pandas
+scikit-learn
+statsmodels
