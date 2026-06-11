@@ -4,7 +4,7 @@ import { useWebSocket } from './useWebSocket';
 
 const API_BASE = '/api';
 const disableWs = import.meta.env.VITE_DISABLE_WS === 'true';
-const WS_URL = disableWs ? '' : `ws://${window.location.hostname}:8001/ws`;
+const WS_URL = disableWs ? '' : `${location.protocol === 'https:' ? 'wss:' : 'ws:'}//${location.host}/ws`;
 
 export function useSimulation() {
   const [state, setState] = useState<SimulationState | null>(null);
@@ -42,25 +42,36 @@ export function useSimulation() {
     fetchHealth();
     fetchState();
     const hInterval = setInterval(fetchHealth, 5000);
-
-    if (disableWs) {
-      pollRef.current = setInterval(fetchState, 1000);
-    }
-
-    return () => {
-      clearInterval(hInterval);
-      if (pollRef.current) clearInterval(pollRef.current);
-    };
+    return () => clearInterval(hInterval);
   }, [fetchHealth, fetchState]);
 
   const handleWsMessage = useCallback((wsState: SimulationState) => {
     setState(wsState);
   }, []);
 
-  useWebSocket({
+  const { connected } = useWebSocket({
     url: WS_URL,
     onMessage: handleWsMessage,
   });
+
+  useEffect(() => {
+    if (!connected) {
+      fetchState();
+      pollRef.current = setInterval(fetchState, 1000);
+    } else {
+      if (pollRef.current) {
+        clearInterval(pollRef.current);
+        pollRef.current = undefined;
+      }
+    }
+
+    return () => {
+      if (pollRef.current) {
+        clearInterval(pollRef.current);
+        pollRef.current = undefined;
+      }
+    };
+  }, [connected, fetchState]);
 
   const start = useCallback(async () => {
     try {
