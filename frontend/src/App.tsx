@@ -5,6 +5,7 @@ import Overview from './pages/Overview';
 import Simulate from './pages/Simulate';
 import Visualize from './pages/Visualize';
 import Insights from './pages/Insights';
+import About from './pages/About';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<string>('overview');
@@ -51,6 +52,11 @@ export default function App() {
           {activeTab === 'insights' && (
             <motion.div key="insights" {...pageTransition}>
               <Insights />
+            </motion.div>
+          )}
+          {activeTab === 'about' && (
+            <motion.div key="about" {...pageTransition}>
+              <About />
             </motion.div>
           )}
         </AnimatePresence>

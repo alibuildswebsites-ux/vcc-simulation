@@ -35,7 +35,7 @@ export const Simulate = () => {
         <PatternSelector state={state} onUpdateConfig={updateConfig} />
       </section>
 
-      <section className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <section className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Param label="Users/server" value={state?.config.users_per_server ?? 100} onMinus={() => updateConfig({ users_per_server: Math.max(20, (state?.config.users_per_server ?? 100) - 20) })} onPlus={() => updateConfig({ users_per_server: (state?.config.users_per_server ?? 100) + 20 })} />
         <Param label="Cold start" value={`${state?.config.cold_start_base_delay ?? 5}t`} onMinus={() => updateConfig({ cold_start_base_delay: Math.max(1, (state?.config.cold_start_base_delay ?? 5) - 1) })} onPlus={() => updateConfig({ cold_start_base_delay: (state?.config.cold_start_base_delay ?? 5) + 1 })} />
         <Param label="Warm pool" value={state?.config.warm_pool_size ?? 2} onMinus={() => updateConfig({ warm_pool_size: Math.max(0, (state?.config.warm_pool_size ?? 2) - 1) })} onPlus={() => updateConfig({ warm_pool_size: (state?.config.warm_pool_size ?? 2) + 1 })} />
@@ -45,12 +45,14 @@ export const Simulate = () => {
 };
 
 const Param = ({ label, value, onMinus, onPlus }: { label: string; value: string | number; onMinus: () => void; onPlus: () => void }) => (
-  <div className="rounded-xl border border-[#1e1e1e] bg-[#0f0f0f] p-4">
-    <div className="text-[10px] uppercase tracking-wider text-[#525252]">{label}</div>
-    <div className="flex items-center justify-between mt-2">
-      <button onClick={onMinus} className="h-8 w-8 rounded-lg border border-[#262626] text-[#a1a1a1]">-</button>
-      <div className="stat-number text-xl font-bold text-white">{value}</div>
-      <button onClick={onPlus} className="h-8 w-8 rounded-lg border border-[#262626] text-[#a1a1a1]">+</button>
+  <div className="p-[1px] rounded-2xl bg-gradient-to-b from-white/8 to-transparent">
+    <div className="rounded-[calc(2rem-1px)] bg-[#0f0f0f] p-4">
+      <div className="text-[10px] uppercase tracking-wider text-[#525252] mb-2">{label}</div>
+      <div className="flex items-center justify-between gap-2">
+        <button onClick={onMinus} className="h-8 w-8 rounded-lg border border-[#262626] text-[#a1a1a1] hover:text-white hover:border-[#3a3a3a] transition-colors cursor-pointer flex items-center justify-center text-sm">−</button>
+        <div className="stat-number text-xl font-bold text-white tabular-nums">{value}</div>
+        <button onClick={onPlus} className="h-8 w-8 rounded-lg border border-[#262626] text-[#a1a1a1] hover:text-white hover:border-[#3a3a3a] transition-colors cursor-pointer flex items-center justify-center text-sm">+</button>
+      </div>
     </div>
   </div>
 );

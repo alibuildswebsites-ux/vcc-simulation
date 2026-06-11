@@ -1,6 +1,6 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Activity, BrainCircuit, BarChart3, ArrowRight, Shield, Zap } from 'lucide-react';
+import { Activity, BrainCircuit, BarChart3, ArrowRight, Shield, Zap, Sparkles } from 'lucide-react';
 import { useSimulation } from '../hooks/useSimulation';
 
 const stagger = {
@@ -16,12 +16,13 @@ const fadeUp = {
 export const Overview: React.FC = () => {
   const { state, start, stop } = useSimulation();
 
+  const autoStarted = useRef(false);
   useEffect(() => {
-    // Auto-start simulation when overview loads
-    if (state?.running === false) {
+    if (!autoStarted.current && state?.running === false) {
+      autoStarted.current = true;
       start();
     }
-  }, [state?.running, start, stop]);
+  }, [state?.running, start]);
 
   const stats = [
     {
@@ -29,21 +30,18 @@ export const Overview: React.FC = () => {
       value: state?.current_users ?? 0,
       label: 'Current Users',
       sub: 'Simulated load',
-      color: 'text-white',
     },
     {
       icon: BrainCircuit,
       value: `${state?.prediction_confidence?.avg_error ?? 0}`.replace(/0+$/, '').replace(/\.$/, '') || '0',
       label: 'Prediction Error',
       sub: 'Lower is better',
-      color: 'text-white',
     },
     {
       icon: BarChart3,
       value: state?.active_count ?? 0,
       label: 'Active Servers',
       sub: 'Currently serving load',
-      color: 'text-white',
     },
   ];
 
@@ -66,15 +64,17 @@ export const Overview: React.FC = () => {
   ];
 
   return (
-    <div className="flex flex-col min-h-[calc(100dvh-3.5rem)] py-10 px-2">
-      {/* Auto-start notice */}
+    <div className="flex flex-col min-h-[calc(100dvh-3.5rem)] py-16 sm:py-24 px-2">
+      {/* Auto-start notice as fixed toast */}
       {!state?.running && (
-        <div className="mb-4 p-3 bg-[#111111] border border-[#222222] rounded-xl">
-          <div className="flex items-center gap-2 text-sm text-[#e7000b]">
-            <Activity className="h-4 w-4 text-[#e7000b]" strokeWidth={2} />
-            <span>Starting simulation...</span>
-          </div>
-        </div>
+        <motion.div
+          initial={{ opacity: 0, y: -12 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="fixed top-16 left-1/2 -translate-x-1/2 z-40 flex items-center gap-2 px-4 py-2 bg-[#111111] border border-[#222222] rounded-full text-xs text-[#e7000b] shadow-lg"
+        >
+          <Sparkles className="h-3 w-3" strokeWidth={2} />
+          Starting simulation...
+        </motion.div>
       )}
 
       {/* Hero */}
@@ -90,22 +90,14 @@ export const Overview: React.FC = () => {
         </motion.div>
 
         <motion.h1
-          className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-white leading-none mb-5"
+          className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight leading-none mb-5"
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
         >
-          Virtual Cloud{' '}
-          <span className="relative">
-            <span className="text-white">
-              Computing Simulator
-            </span>
-            <motion.span
-              className="absolute -bottom-1 left-0 w-full h-[2px] bg-white rounded-full"
-              initial={{ scaleX: 0 }}
-              animate={{ scaleX: 1 }}
-              transition={{ delay: 0.6, duration: 0.5, ease: 'easeOut' }}
-            />
+          <span className="text-white">Virtual Cloud </span>
+          <span className="bg-gradient-to-r from-white via-white/90 to-white/60 bg-clip-text text-transparent">
+            Computing Simulator
           </span>
         </motion.h1>
 
@@ -127,7 +119,7 @@ export const Overview: React.FC = () => {
           <button
             onClick={start}
             disabled={state?.running}
-            className="flex items-center justify-center gap-2 px-6 py-2.5 rounded-lg bg-white hover:bg-[#e5e5e5] text-black font-semibold text-sm transition-all duration-200 active:scale-[0.98] cursor-pointer"
+            className="flex items-center justify-center gap-2 px-6 py-2.5 rounded-lg bg-white hover:bg-[#e5e5e5] text-black font-semibold text-sm transition-all duration-200 active:scale-[0.98] cursor-pointer disabled:opacity-50"
           >
             Start Simulation
             <ArrowRight className="h-4 w-4" strokeWidth={2} />
@@ -135,7 +127,7 @@ export const Overview: React.FC = () => {
           <button
             onClick={stop}
             disabled={!state?.running}
-            className="flex items-center justify-center gap-2 px-6 py-2.5 rounded-lg bg-transparent border border-[#262626] text-[#a1a1a1] hover:text-white hover:border-[#3a3a3a] font-semibold text-sm transition-all duration-200 active:scale-[0.98] cursor-pointer"
+            className="flex items-center justify-center gap-2 px-6 py-2.5 rounded-lg bg-transparent border border-[#262626] text-[#a1a1a1] hover:text-white hover:border-[#3a3a3a] font-semibold text-sm transition-all duration-200 active:scale-[0.98] cursor-pointer disabled:opacity-30"
           >
             Stop Simulation
           </button>
@@ -147,7 +139,7 @@ export const Overview: React.FC = () => {
         variants={stagger}
         initial="hidden"
         animate="visible"
-        className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto w-full mt-14"
+        className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto w-full mt-16"
       >
         {stats.map((s, i) => {
           const Icon = s.icon;
@@ -155,13 +147,15 @@ export const Overview: React.FC = () => {
             <motion.div
               key={i}
               variants={fadeUp}
-              className="group relative overflow-hidden bg-[#0f0f0f] border border-[#1e1e1e] rounded-xl p-5 hover:border-[#2a2a2a] transition-colors duration-200 cursor-default"
+              className="group p-[1px] rounded-2xl bg-gradient-to-b from-white/10 to-transparent"
             >
-              <div className="absolute inset-0 bg-white/3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl" />
-              <Icon className={`h-5 w-5 ${s.color} mb-3`} strokeWidth={1.5} />
-              <div className="stat-number text-2xl font-bold text-white mb-0.5">{s.value}</div>
-              <div className="text-sm font-medium text-[#a1a1a1]">{s.label}</div>
-              <div className="text-xs text-[#525252] mt-0.5">{s.sub}</div>
+              <div className="relative overflow-hidden rounded-[calc(2rem-1px)] bg-[#0a0a0a] p-5 h-full hover:bg-[#0c0c0c] transition-colors duration-300 cursor-default">
+                <div className="absolute inset-0 bg-white/[0.02] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <Icon className="h-5 w-5 text-white mb-3" strokeWidth={1.5} />
+                <div className="stat-number text-2xl font-bold text-white mb-0.5">{s.value}</div>
+                <div className="text-sm font-medium text-[#a1a1a1]">{s.label}</div>
+                <div className="text-xs text-[#525252] mt-0.5">{s.sub}</div>
+              </div>
             </motion.div>
           );
         })}
@@ -180,13 +174,15 @@ export const Overview: React.FC = () => {
             <motion.div
               key={i}
               variants={fadeUp}
-              className="bg-[#0f0f0f] border border-[#1e1e1e] rounded-xl p-5"
+              className="p-[1px] rounded-2xl bg-gradient-to-b from-white/8 to-transparent"
             >
-              <div className="flex items-center gap-2 mb-2">
-                <Icon className="h-4 w-4 text-white" strokeWidth={1.5} />
-                <span className="text-sm font-semibold text-white">{f.title}</span>
+              <div className="rounded-[calc(2rem-1px)] bg-[#0f0f0f] p-5 h-full">
+                <div className="flex items-center gap-2 mb-2">
+                  <Icon className="h-4 w-4 text-white" strokeWidth={1.5} />
+                  <span className="text-sm font-semibold text-white">{f.title}</span>
+                </div>
+                <p className="text-xs text-[#737373] leading-relaxed">{f.desc}</p>
               </div>
-              <p className="text-xs text-[#737373] leading-relaxed">{f.desc}</p>
             </motion.div>
           );
         })}
